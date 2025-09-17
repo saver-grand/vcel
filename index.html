@@ -1,0 +1,215 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DDS SUPPORTER — Colorful</title>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --card:#0b1220cc;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,0.03), transparent 10%),
+                  radial-gradient(800px 400px at 90% 90%, rgba(255,255,255,0.02), transparent 10%),
+                  linear-gradient(180deg,#071024 0%, #07162a 50%, #0b1b33 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      color: white;
+      padding:2rem;
+    }.card{
+  width:100%;
+  max-width:980px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border-radius:18px;
+  padding:28px;
+  display:flex;
+  gap:22px;
+  align-items:center;
+  box-shadow: 0 8px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+  backdrop-filter: blur(6px) saturate(120%);
+}
+
+.logo{
+  flex:0 0 160px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px;
+  border-radius:12px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+}
+
+/* simple Philippines flag SVG container sizing */
+.flag{
+  width:140px;
+  height:90px;
+  display:block;
+}
+
+.content{
+  flex:1 1 auto;
+  min-width:0;
+}
+
+.title{
+  font-size: clamp(28px, 5vw, 56px);
+  line-height:1.02;
+  margin:0 0 6px 0;
+  font-weight:800;
+  letter-spacing:1px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+/* rainbow animated text effect */
+.rainbow{
+  background: conic-gradient(from 120deg, #ff2d55, #ff9500, #ffd60a, #34c759, #0aa2ff, #5856d6, #ff2d55);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: spinbg 6s linear infinite;
+  background-size: 200% 200%;
+  padding-right:6px;
+  transform-origin: center;
+  display:inline-block;
+  -webkit-text-stroke: 0.6px rgba(0,0,0,0.25);
+}
+
+@keyframes spinbg{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+.subtitle{
+  margin:0;
+  color:rgba(255,255,255,0.78);
+  font-weight:600;
+  font-size:14px;
+}
+
+.badges{
+  margin-top:12px;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.pill{
+  padding:8px 12px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:13px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+  border:1px solid rgba(255,255,255,0.03);
+  backdrop-filter: blur(4px);
+}
+
+.actions{
+  margin-left:auto;
+  display:flex;
+  gap:10px;
+}
+
+.btn{
+  padding:10px 14px;
+  border-radius:10px;
+  border:0;
+  font-weight:700;
+  cursor:pointer;
+  background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  color: white;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.45);
+}
+
+/* responsive */
+@media (max-width:720px){
+  .card{flex-direction:column;align-items:flex-start}
+  .logo{width:100%;justify-content:flex-start}
+  .actions{width:100%;justify-content:space-between;margin-top:8px}
+}
+
+  </style>
+</head>
+<body>
+  <main class="card" role="main">
+    <figure class="logo" aria-hidden="true">
+      <!-- Inline simplified Philippines flag SVG -->
+      <svg class="flag" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flag of the Philippines">
+        <!-- left white triangle -->
+        <polygon points="0,0 1,1 0,2" fill="#ffffff" />
+        <!-- top stripe (blue) -->
+        <rect x="1" y="0" width="2" height="1" fill="#0038a8" />
+        <!-- bottom stripe (red) -->
+        <rect x="1" y="1" width="2" height="1" fill="#ce1126" /><!-- sun and three stars (simplified) positioned inside triangle -->
+    <g transform="translate(0.22,1)">
+      <!-- sun circle -->
+      <circle cx="0.4" cy="0" r="0.2" fill="#ffd100" />
+      <!-- sun rays (8 small triangles) -->
+      <g fill="#ffd100">
+        <polygon points="0.55,-0.12 0.68,-0.25 0.6,-0.02"/>
+        <polygon points="0.35,-0.12 0.22,-0.25 0.3,-0.02"/>
+        <polygon points="0.72,0.05 0.85,0.08 0.65,0.08"/>
+        <polygon points="0.08,0.05 -0.05,0.08 0.15,0.08"/>
+        <polygon points="0.6,0.22 0.72,0.35 0.58,0.20"/>
+        <polygon points="0.2,0.22 0.08,0.35 0.22,0.20"/>
+        <polygon points="0.55,0.30 0.68,0.45 0.6,0.28"/>
+        <polygon points="0.35,0.30 0.22,0.45 0.3,0.28"/>
+      </g>
+      <!-- three stars -->
+      <g fill="#ffd100" transform="translate(0.9,-0.9) scale(0.45)">
+        <polygon points="0, -0.25 0.06, -0.08 0.25, -0.08 0.09, 0.02 0.14, 0.18 0, 0.08 -0.14, 0.18 -0.09, 0.02 -0.25, -0.08 -0.06, -0.08" />
+        <use href="#s" x="-0.6" />
+      </g>
+    </g>
+  </svg>
+</figure>
+
+<section class="content">
+  <h1 class="title"><span class="rainbow">DDS SUPPORTER</span></h1>
+  <p class="subtitle">Proud display banner — colorful, responsive, and ready to use in any page. Use this snippet to show support or as a decorative header.</p>
+
+  <div class="badges" aria-hidden="true">
+    <span class="pill">🇵🇭 Philippines</span>
+    <span class="pill">Bold Type</span>
+    <span class="pill">Animated Gradient</span>
+  </div>
+
+  <div class="actions" role="group" aria-label="Actions">
+    <button class="btn" onclick="copyHTML()">Copy HTML</button>
+    <button class="btn" onclick="downloadHTML()">Download .html</button>
+  </div>
+</section>
+
+  </main>  <script>
+    // Copy the full HTML to clipboard (simple approach)
+    function copyHTML(){
+      const blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
+      const reader = new FileReader();
+      reader.onload = () => {
+        navigator.clipboard.writeText(reader.result).then(()=>{
+          alert('HTML copied to clipboard — paste into a new file (index.html).');
+        }).catch(()=>alert('Unable to copy automatically.'));
+      };
+      reader.readAsText(blob);
+    }
+
+    function downloadHTML(){
+      const content = '<!doctype html>' + document.documentElement.outerHTML;
+      const a = document.createElement('a');
+      const file = new Blob([content], {type: 'text/html'});
+      a.href = URL.createObjectURL(file);
+      a.download = 'dds_supporter_index.html';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+  </script></body>
+</html>
