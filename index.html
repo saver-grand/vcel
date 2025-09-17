@@ -46,7 +46,6 @@
   background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
 }
 
-/* simple Philippines flag SVG container sizing */
 .flag{
   width:140px;
   height:90px;
@@ -69,7 +68,6 @@
   gap:14px;
 }
 
-/* rainbow animated text effect */
 .rainbow{
   background: conic-gradient(from 120deg, #ff2d55, #ff9500, #ffd60a, #34c759, #0aa2ff, #5856d6, #ff2d55);
   -webkit-background-clip: text;
@@ -113,28 +111,10 @@
   backdrop-filter: blur(4px);
 }
 
-.actions{
-  margin-left:auto;
-  display:flex;
-  gap:10px;
-}
-
-.btn{
-  padding:10px 14px;
-  border-radius:10px;
-  border:0;
-  font-weight:700;
-  cursor:pointer;
-  background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-  color: white;
-  box-shadow: 0 6px 18px rgba(2,6,23,0.45);
-}
-
 /* responsive */
 @media (max-width:720px){
   .card{flex-direction:column;align-items:flex-start}
   .logo{width:100%;justify-content:flex-start}
-  .actions{width:100%;justify-content:space-between;margin-top:8px}
 }
 
   </style>
@@ -142,74 +122,35 @@
 <body>
   <main class="card" role="main">
     <figure class="logo" aria-hidden="true">
-      <!-- Inline simplified Philippines flag SVG -->
       <svg class="flag" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flag of the Philippines">
-        <!-- left white triangle -->
         <polygon points="0,0 1,1 0,2" fill="#ffffff" />
-        <!-- top stripe (blue) -->
         <rect x="1" y="0" width="2" height="1" fill="#0038a8" />
-        <!-- bottom stripe (red) -->
-        <rect x="1" y="1" width="2" height="1" fill="#ce1126" /><!-- sun and three stars (simplified) positioned inside triangle -->
-    <g transform="translate(0.22,1)">
-      <!-- sun circle -->
-      <circle cx="0.4" cy="0" r="0.2" fill="#ffd100" />
-      <!-- sun rays (8 small triangles) -->
-      <g fill="#ffd100">
-        <polygon points="0.55,-0.12 0.68,-0.25 0.6,-0.02"/>
-        <polygon points="0.35,-0.12 0.22,-0.25 0.3,-0.02"/>
-        <polygon points="0.72,0.05 0.85,0.08 0.65,0.08"/>
-        <polygon points="0.08,0.05 -0.05,0.08 0.15,0.08"/>
-        <polygon points="0.6,0.22 0.72,0.35 0.58,0.20"/>
-        <polygon points="0.2,0.22 0.08,0.35 0.22,0.20"/>
-        <polygon points="0.55,0.30 0.68,0.45 0.6,0.28"/>
-        <polygon points="0.35,0.30 0.22,0.45 0.3,0.28"/>
-      </g>
-      <!-- three stars -->
-      <g fill="#ffd100" transform="translate(0.9,-0.9) scale(0.45)">
-        <polygon points="0, -0.25 0.06, -0.08 0.25, -0.08 0.09, 0.02 0.14, 0.18 0, 0.08 -0.14, 0.18 -0.09, 0.02 -0.25, -0.08 -0.06, -0.08" />
-        <use href="#s" x="-0.6" />
-      </g>
-    </g>
-  </svg>
-</figure>
-
-<section class="content">
+        <rect x="1" y="1" width="2" height="1" fill="#ce1126" />
+        <g transform="translate(0.22,1)">
+          <circle cx="0.4" cy="0" r="0.2" fill="#ffd100" />
+          <g fill="#ffd100">
+            <polygon points="0.55,-0.12 0.68,-0.25 0.6,-0.02"/>
+            <polygon points="0.35,-0.12 0.22,-0.25 0.3,-0.02"/>
+            <polygon points="0.72,0.05 0.85,0.08 0.65,0.08"/>
+            <polygon points="0.08,0.05 -0.05,0.08 0.15,0.08"/>
+            <polygon points="0.6,0.22 0.72,0.35 0.58,0.20"/>
+            <polygon points="0.2,0.22 0.08,0.35 0.22,0.20"/>
+            <polygon points="0.55,0.30 0.68,0.45 0.6,0.28"/>
+            <polygon points="0.35,0.30 0.22,0.45 0.3,0.28"/>
+          </g>
+        </g>
+      </svg>
+    </figure><section class="content">
   <h1 class="title"><span class="rainbow">DDS SUPPORTER</span></h1>
-  <p class="subtitle">Proud display banner — colorful, responsive, and ready to use in any page. Use this snippet to show support or as a decorative header.</p>
+  <p class="subtitle">Maraming nanlalait na feeling matatalino na mga BBM supporter, Edi kayo na matalino hahahaha.</p>
 
   <div class="badges" aria-hidden="true">
     <span class="pill">🇵🇭 Philippines</span>
-    <span class="pill">Bold Type</span>
-    <span class="pill">Animated Gradient</span>
-  </div>
-
-  <div class="actions" role="group" aria-label="Actions">
-    <button class="btn" onclick="copyHTML()">Copy HTML</button>
-    <button class="btn" onclick="downloadHTML()">Download .html</button>
+    <span class="pill">Rodrigo Roa Duterte</span>
+    <span class="pill">Best President of the Philippines 👊</span>
   </div>
 </section>
 
-  </main>  <script>
-    // Copy the full HTML to clipboard (simple approach)
-    function copyHTML(){
-      const blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
-      const reader = new FileReader();
-      reader.onload = () => {
-        navigator.clipboard.writeText(reader.result).then(()=>{
-          alert('HTML copied to clipboard — paste into a new file (index.html).');
-        }).catch(()=>alert('Unable to copy automatically.'));
-      };
-      reader.readAsText(blob);
-    }
-
-    function downloadHTML(){
-      const content = '<!doctype html>' + document.documentElement.outerHTML;
-      const a = document.createElement('a');
-      const file = new Blob([content], {type: 'text/html'});
-      a.href = URL.createObjectURL(file);
-      a.download = 'dds_supporter_index.html';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
-  </script></body>
+  </main>
+</body>
 </html>
