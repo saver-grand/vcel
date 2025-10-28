@@ -5,7 +5,7 @@ const channels = [
     title: "Philadelphia 76ers vs. Washington Wizards",
     date: "2025-10-27",
     time: "07:00",
-    url: "https://e1.thetvapp.to/hls/NBA07/tracks-v1a1/mono.m3u8"
+    url: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8"
   },
   {
     title: "Charlotte Hornets vs. Miami Heat",
