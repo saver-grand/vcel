@@ -1,0 +1,142 @@
+:root {
+  --bg-dark: #0b0b0b;
+  --bg-card: #151515;
+  --text-main: #e0ffe0;
+  --accent: #00ff99;
+  --warning: #ff4444;
+  --shadow-glow: rgba(0, 255, 153, 0.4);
+  --hover-glow: rgba(0, 255, 153, 0.7);
+  --input-bg: #1d1d1d;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 1rem;
+  background: var(--bg-dark);
+  color: var(--text-main);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--shadow-glow);
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 0.4rem;
+}
+
+#phTime {
+  font-size: 1rem;
+  color: #b3ffb3;
+  text-shadow: 0 0 6px var(--hover-glow);
+  margin-bottom: 1rem;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: 15px;
+  box-shadow: 0 0 20px var(--shadow-glow);
+  padding: 1rem;
+  width: 100%;
+  max-width: 1000px;
+}
+
+#searchBar {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  background: var(--input-bg);
+  color: var(--text-main);
+  margin-bottom: 1rem;
+}
+
+.channel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.channel-box {
+  background: #111;
+  border-radius: 12px;
+  padding: 0.6rem;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 255, 153, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.channel-box:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px var(--hover-glow);
+}
+
+.channel-box img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 6px;
+  filter: brightness(1.1);
+}
+
+.channel-box h3 {
+  font-size: 0.85rem;
+  color: #ccffcc;
+  margin: 4px 0;
+}
+
+.countdown {
+  font-size: 0.75rem;
+  margin-top: 3px;
+  color: #ffcc66;
+  font-weight: 500;
+}
+
+#videoContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.95);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+#videoPlayer {
+  width: 90vw;
+  max-height: 90vh;
+  border-radius: 12px;
+  border: none;
+}
+
+#closeBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--accent);
+  color: #000;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--hover-glow);
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.5rem; }
+  #searchBar { font-size: 0.9rem; }
+  .channel-box img { width: 45px; height: 45px; }
+  .channel-box h3 { font-size: 0.7rem; }
+}
