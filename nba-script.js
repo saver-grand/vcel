@@ -33,7 +33,7 @@ const channels = [
   {
     title: "Sacramento Kings vs. Chicago Bulls",
     date: "2025-10-30",
-    time: "8:00am",
+    time: "08:00am",
     server1: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8",
     server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214176.m3u8"
   },
@@ -98,7 +98,7 @@ function renderChannels(list) {
   highlightChannel(0);
 }
 
-// ============ Countdown Logic ============
+// ============ Countdown ============
 function updateCountdowns() {
   const now = new Date();
   const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
@@ -157,35 +157,76 @@ function pad(n) {
   return n.toString().padStart(2, "0");
 }
 
-// ============ Player ============
+// ============ Video Player ============
 function playChannel(url) {
   const container = document.getElementById("videoContainer");
   const video = document.getElementById("videoPlayer");
   container.style.display = "flex";
 
-  if (hls) hls.destroy();
+  if (hls) {
+    hls.destroy();
+    hls = null;
+  }
   video.pause();
   video.removeAttribute("src");
   video.load();
 
-  if (Hls.isSupported()) {
-    hls = new Hls();
-    hls.loadSource(url);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-    video.src = url;
-    video.addEventListener("loadedmetadata", () => video.play());
-  } else {
-    alert("This stream format is not supported.");
+  try {
+    if (Hls.isSupported()) {
+      hls = new Hls({
+        debug: false,
+        enableWorker: true,
+        lowLatencyMode: true
+      });
+      hls.loadSource(url);
+      hls.attachMedia(video);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch(() => {});
+      });
+
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+          console.warn("Stream error:", data.type);
+          hls.destroy();
+          showVideoError();
+        }
+      });
+
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = url;
+      video.addEventListener("loadedmetadata", () => video.play().catch(() => {}));
+      video.onerror = () => showVideoError();
+    } else {
+      showVideoError();
+    }
+  } catch (err) {
+    console.error("Playback failed:", err);
+    showVideoError();
   }
 }
 
+// Silent error display
+function showVideoError() {
+  const container = document.getElementById("videoContainer");
+  container.innerHTML = `
+    <div style="color:#fff;text-align:center;padding:20px;">
+      <h2>⚠️ Stream Unavailable</h2>
+      <p>This stream is currently offline or unsupported.</p>
+      <button onclick="closeVideo()" 
+        style="margin-top:10px;padding:10px 20px;background:#0f0;color:#000;border:none;border-radius:8px;">
+        Close
+      </button>
+    </div>`;
+}
+
+// Close player
 function closeVideo() {
-  const video = document.getElementById("videoPlayer");
-  document.getElementById("videoContainer").style.display = "none";
-  video.pause();
-  video.removeAttribute("src");
+  const container = document.getElementById("videoContainer");
+  container.style.display = "none";
+  container.innerHTML = `
+    <video id="videoPlayer" controls autoplay></video>
+    <button class="close-btn" onclick="closeVideo()">Close</button>`;
 }
 
 // ============ TV Remote Navigation ============
@@ -203,6 +244,7 @@ function highlightChannel(index) {
 document.addEventListener("keydown", (e) => {
   const boxes = document.querySelectorAll(".channel-box");
   const total = boxes.length;
+
   if (document.getElementById("videoContainer").style.display === "flex") {
     if (e.key === "Backspace" || e.key === "Escape") closeVideo();
     return;
