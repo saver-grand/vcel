@@ -4,31 +4,31 @@ const channels = [
   {
     title: "Philadelphia 76ers vs. Washington Wizards",
     date: "2025-10-27",
-    time: "07:00",
+    time: "07:00am",
     url: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8"
   },
   {
     title: "Charlotte Hornets vs. Miami Heat",
     date: "2025-10-27",
-    time: "07:00",
+    time: "07:00am",
     url: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8"
   },
   {
     title: "New York Knicks vs. Milwaukee Bucks",
     date: "2025-10-27",
-    time: "08:00",
+    time: "08:00am",
     url: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8"
   },
   {
     title: "Sacramento Kings vs. Oklahoma City Thunder",
     date: "2025-10-27",
-    time: "08:00",
+    time: "08:00am",
     url: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8"
   },
   {
     title: "LA Clippers vs. Golden State Warriors",
     date: "2025-10-27",
-    time: "08:00",
+    time: "11:00am",
     url: "https://e3.thetvapp.to/hls/NBA11/tracks-v1a1/mono.m3u8"
   }
 ];
