@@ -7,70 +7,70 @@ const channels = [
     date: "2025-10-30",
     time: "06:30am",
     server1: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8",
-    server2: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8"
+    server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214173.ts"
   },
   {
     title: "Cleveland Cavaliers vs. Boston Celtics",
     date: "2025-10-30",
     time: "07:00am",
     server1: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8",
-    server2: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8"
+    server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214171.ts"
   },
   {
     title: "Orlando Magic vs. Detroit Pistons",
     date: "2025-10-30",
     time: "07:00am",
     server1: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8",
-    server2: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8"
+    server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214174.ts"
   },
   {
     title: "Atlanta Hawks vs. Brooklyn Nets",
     date: "2025-10-30",
     time: "07:30am",
     server1: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8",
-    server2: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8"
+    server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214175.ts"
   },
   {
     title: "Sacramento Kings vs. Chicago Bulls",
     date: "2025-10-30",
     time: "8:00am",
     server1: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8",
-    server2: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8"
+    server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214176.ts"
   },
   {
     title: "Indiana Pacers vs. Dallas Mavericks",
     date: "2025-10-30",
     time: "08:30am",
     server1: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8",
-    server2: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8"
+    server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214177.ts"
   },
   {
     title: "New Orleans Pelicans vs. Denver Nuggets",
     date: "2025-10-30",
     time: "09:00am",
     server1: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8",
-    server2: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8"
+    server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214178.ts"
   },
   {
     title: "Portland Trail Blazers vs. Utah Jazz",
     date: "2025-10-30",
     time: "09:00am",
     server1: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8",
-    server2: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8"
+    server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214179.ts"
   },
   {
     title: "Los Angeles Lakers vs. Minnesota Timberwolves",
     date: "2025-10-30",
     time: "09:30am",
     server1: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8",
-    server2: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8"
+    server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214172.ts"
   },
   {
     title: "Memphis Grizzlies vs. Phoenix Suns",
     date: "2025-10-30",
     time: "10:00am",
     server1: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8",
-    server2: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8"
+    server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214180.ts"
   }
 ];
 
