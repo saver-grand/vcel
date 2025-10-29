@@ -35,7 +35,7 @@ const channels = [
   {
     title: "Sacramento Kings vs. Chicago Bulls",
     date: "2025-10-30",
-    time: "8:00am",
+    time: "08:00am",
     server1: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8",
     server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214176.m3u8"
   },
@@ -76,32 +76,27 @@ const channels = [
   }
 ];
 
-// 🏀 Logo
 const logos = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUDu-D6tpUgnxurH9_AkBQ6a9TzVVpBfNE0VJArNbaWwsFTAEddxVTgHs&s=10";
 
-// 🎨 Render Channels
+// 🎨 Render channels
 function renderChannels(list) {
   const container = document.getElementById("channelList");
-  container.innerHTML = list
-    .map(
-      (ch, i) => `
-      <div class="channel-box" tabindex="0" data-index="${i}" onclick="playChannel('${ch.server1}')">
-        <img src="${logos}" alt="${ch.title}">
-        <h3>${ch.title}</h3>
-        <small class="game-date">📅 ${ch.date} — ${ch.time} PH</small>
-        <div id="timer-${i}" class="countdown">Loading...</div>
-        <div class="server-buttons">
-          <button onclick="event.stopPropagation(); playChannel('${ch.server1}')">Server 1</button>
-          <button onclick="event.stopPropagation(); playChannel('${ch.server2}')">Server 2</button>
-        </div>
+  container.innerHTML = list.map((ch, i) => `
+    <div class="channel-box" tabindex="0" data-index="${i}" onclick="playChannel('${ch.server1}')">
+      <img loading="lazy" src="${logos}" alt="${ch.title}">
+      <h3>${ch.title}</h3>
+      <small class="game-date">📅 ${ch.date} — ${ch.time} PH</small>
+      <div id="timer-${i}" class="countdown">Loading...</div>
+      <div class="server-buttons">
+        <button onclick="event.stopPropagation(); playChannel('${ch.server1}')">Server 1</button>
+        <button onclick="event.stopPropagation(); playChannel('${ch.server2}')">Server 2</button>
       </div>
-    `
-    )
-    .join("");
+    </div>
+  `).join("");
   setFocus(focusedIndex);
 }
 
-// 🕒 Update countdowns
+// 🕒 Countdown updater
 function updateCountdowns() {
   const now = new Date();
   const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
@@ -147,10 +142,9 @@ function updateCountdowns() {
   });
 }
 
-// ▶ Play Channel (Supports .m3u8 and .ts)
+// ▶ Stream Player (safe from popups)
 function playChannel(url) {
   lastFocused = focusedIndex;
-
   const container = document.getElementById("videoContainer");
   const video = document.getElementById("videoPlayer");
   container.style.display = "flex";
@@ -166,24 +160,40 @@ function playChannel(url) {
   try {
     if (isM3U8 && Hls.isSupported()) {
       hls = new Hls({
-        maxBufferLength: 30,
         enableWorker: true,
-        lowLatencyMode: true
+        lowLatencyMode: true,
+        liveDurationInfinity: true,
+        maxBufferLength: 20,
+        backBufferLength: 30
       });
       hls.loadSource(url);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
-    } else if (isTS || video.canPlayType("video/mp2t") || video.canPlayType("video/mp4")) {
+    } else {
       video.src = url;
       video.play().catch(() => {});
-    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = url;
-      video.addEventListener("loadedmetadata", () => video.play().catch(() => {}));
-    } else {
-      console.warn("Stream format not supported:", url);
     }
-  } catch (err) {
-    console.error("Playback error:", err);
+
+    // 🧠 Silent error handler (no popups, no alerts)
+    video.addEventListener("error", () => {
+      console.log("Stream temporarily unavailable, retrying silently...");
+      setTimeout(() => {
+        if (hls) {
+          hls.startLoad();
+        } else {
+          video.load();
+          video.play().catch(() => {});
+        }
+      }, 4000);
+    });
+
+    video.addEventListener("ended", () => {
+      video.play().catch(() => {});
+    });
+
+    history.pushState(null, null, location.href);
+  } catch {
+    // Suppress any thrown errors silently
   }
 }
 
@@ -193,40 +203,29 @@ function closeVideo() {
   document.getElementById("videoContainer").style.display = "none";
   video.pause();
   video.removeAttribute("src");
+  if (hls) hls.destroy();
   setFocus(lastFocused);
 }
 
-// 🔍 Search
+// 🔍 Search bar
 document.getElementById("searchBar").addEventListener("input", (e) => {
   const q = e.target.value.toLowerCase();
   const filtered = channels.filter((c) => c.title.toLowerCase().includes(q));
   renderChannels(filtered);
 });
 
-// 🎮 TV Remote Navigation
+// 🎮 TV Remote
 document.addEventListener("keydown", (e) => {
   const total = document.querySelectorAll(".channel-box").length;
 
   switch (e.key) {
-    case "ArrowDown":
-      focusedIndex = Math.min(focusedIndex + 3, total - 1);
-      break;
-    case "ArrowUp":
-      focusedIndex = Math.max(focusedIndex - 3, 0);
-      break;
-    case "ArrowRight":
-      focusedIndex = Math.min(focusedIndex + 1, total - 1);
-      break;
-    case "ArrowLeft":
-      focusedIndex = Math.max(focusedIndex - 1, 0);
-      break;
-    case "Enter":
-      document.querySelectorAll(".channel-box")[focusedIndex]?.click();
-      break;
+    case "ArrowDown": focusedIndex = Math.min(focusedIndex + 3, total - 1); break;
+    case "ArrowUp": focusedIndex = Math.max(focusedIndex - 3, 0); break;
+    case "ArrowRight": focusedIndex = Math.min(focusedIndex + 1, total - 1); break;
+    case "ArrowLeft": focusedIndex = Math.max(focusedIndex - 1, 0); break;
+    case "Enter": document.querySelectorAll(".channel-box")[focusedIndex]?.click(); break;
     case "Backspace":
-    case "Escape":
-      closeVideo();
-      break;
+    case "Escape": closeVideo(); break;
   }
 
   setFocus(focusedIndex);
@@ -238,6 +237,9 @@ function setFocus(index) {
   boxes.forEach((b, i) => b.classList.toggle("focused", i === index));
   boxes[index]?.focus();
 }
+
+// 🕹 Back button for TV/Android
+window.addEventListener("popstate", closeVideo);
 
 // 🚀 Init
 window.onload = () => {
