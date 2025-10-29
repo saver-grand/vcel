@@ -2,35 +2,66 @@ let hls;
 
 const channels = [
   {
-    title: "Philadelphia 76ers vs. Washington Wizards",
-    date: "2025-10-27",
-    time: "07:00am",
+    title: "Houston Rockets vs. Toronto Raptors",
+    date: "2025-10-30",
+    time: "06:30am",
     url: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8"
   },
   {
-    title: "Charlotte Hornets vs. Miami Heat",
-    date: "2025-10-27",
+    title: "Cleveland Cavaliers vs. Boston Celtics",
+    date: "2025-10-30",
     time: "07:00am",
     url: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8"
   },
   {
-    title: "New York Knicks vs. Milwaukee Bucks",
-    date: "2025-10-27",
-    time: "08:00am",
+    title: "Orlando Magic vs. Detroit Pistons",
+    date: "2025-10-30",
+    time: "07:00am",
     url: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8"
   },
   {
-    title: "Sacramento Kings vs. Oklahoma City Thunder",
-    date: "2025-10-27",
-    time: "08:00am",
+    title: "Atlanta Hawks vs. Brooklyn Nets",
+    date: "2025-10-30",
+    time: "07:30am",
     url: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8"
   },
   {
-    title: "LA Clippers vs. Golden State Warriors",
-    date: "2025-10-27",
-    time: "11:00am",
+    title: "Sacramento Kings vs. Chicago Bulls",
+    date: "2025-10-30",
+    time: "8:00am",
+    url: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8"
+  },
+    {
+    title: "Indiana Pacers vs. Dallas Mavericks",
+    date: "2025-10-30",
+    time: "08:30am",
+    url: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8"
+  },
+  {
+    title: "New Orleans Pelicans vs. Denver Nuggets",
+    date: "2025-10-30",
+    time: "09:00am",
+    url: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8"
+  },
+  {
+    title: "Portland Trail Blazers vs. Utah Jazz",
+    date: "2025-10-30",
+    time: "09:00am",
+    url: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8"
+  },
+  {
+    title: "Los Angeles Lakers vs. Minnesota Timberwolves",
+    date: "2025-10-30",
+    time: "09:30am",
+    url: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8"
+  },
+  {
+    title: "Memphis Grizzlies vs. Phoenix Suns",
+    date: "2025-10-30",
+    time: "10:00am",
     url: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8"
   }
+  
 ];
 
 
