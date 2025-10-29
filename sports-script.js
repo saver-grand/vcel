@@ -1,114 +1,124 @@
 let hls;
+let focusedIndex = 0; // for TV navigation
 
 const channels = [
   {
     title: "Houston Rockets vs. Toronto Raptors",
     date: "2025-10-30",
     time: "06:30am",
-    url: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8"
+    server1: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8",
+    server2: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8"
   },
   {
     title: "Cleveland Cavaliers vs. Boston Celtics",
     date: "2025-10-30",
     time: "07:00am",
-    url: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8"
+    server1: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8",
+    server2: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8"
   },
   {
     title: "Orlando Magic vs. Detroit Pistons",
     date: "2025-10-30",
     time: "07:00am",
-    url: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8"
+    server1: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8",
+    server2: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8"
   },
   {
     title: "Atlanta Hawks vs. Brooklyn Nets",
     date: "2025-10-30",
     time: "07:30am",
-    url: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8"
+    server1: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8",
+    server2: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8"
   },
   {
     title: "Sacramento Kings vs. Chicago Bulls",
     date: "2025-10-30",
     time: "8:00am",
-    url: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8"
+    server1: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8",
+    server2: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8"
   },
-    {
+  {
     title: "Indiana Pacers vs. Dallas Mavericks",
     date: "2025-10-30",
     time: "08:30am",
-    url: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8"
+    server1: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8",
+    server2: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8"
   },
   {
     title: "New Orleans Pelicans vs. Denver Nuggets",
     date: "2025-10-30",
     time: "09:00am",
-    url: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8"
+    server1: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8",
+    server2: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8"
   },
   {
     title: "Portland Trail Blazers vs. Utah Jazz",
     date: "2025-10-30",
     time: "09:00am",
-    url: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8"
+    server1: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8",
+    server2: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8"
   },
   {
     title: "Los Angeles Lakers vs. Minnesota Timberwolves",
     date: "2025-10-30",
     time: "09:30am",
-    url: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8"
+    server1: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8",
+    server2: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8"
   },
   {
     title: "Memphis Grizzlies vs. Phoenix Suns",
     date: "2025-10-30",
     time: "10:00am",
-    url: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8"
+    server1: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8",
+    server2: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8"
   }
-  
 ];
-
 
 const logos =
   "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUDu-D6tpUgnxurH9_AkBQ6a9TzVVpBfNE0VJArNbaWwsFTAEddxVTgHs&s=10";
 
-// Render channels
+// ============ Render Channels ============
 function renderChannels(list) {
   const container = document.getElementById("channelList");
   container.innerHTML = list
     .map(
       (ch, i) => `
-      <div class="channel-box" onclick="playChannel('${ch.url}')">
+      <div class="channel-box" tabindex="0" data-index="${i}">
         <img src="${logos}" alt="${ch.title}">
         <h3>${ch.title}</h3>
         <small class="game-date">📅 ${ch.date} — ${ch.time} PH</small>
-        <div id="timer-${i}" class="countdown">Loading...</div>
-      </div>
-    `
+        <div id="timer-${i}" class="countdown">Calculating...</div>
+        <div class="server-buttons">
+          <button onclick="playChannel('${ch.server1}')">▶ Server 1</button>
+          <button onclick="playChannel('${ch.server2}')">▶ Server 2</button>
+        </div>
+      </div>`
     )
     .join("");
+  highlightChannel(0);
 }
 
-// Countdown logic
+// ============ Countdown Logic ============
 function updateCountdowns() {
   const now = new Date();
-  // Convert to Philippine time (Asia/Manila)
   const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
 
-  // Update PH Time display
   const timeDisplay = document.getElementById("phTime");
-  if (timeDisplay) {
+  if (timeDisplay)
     timeDisplay.textContent =
       "🇵🇭 Philippine Time: " +
-      phTime.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" });
-  }
+      phTime.toLocaleTimeString("en-US", {
+        hour12: true,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
 
   channels.forEach((ch, i) => {
     const el = document.getElementById(`timer-${i}`);
     if (!el) return;
-
-    // Properly build target time (as PH time)
-    const [hour, minute] = ch.time.split(":").map(Number);
-    const [year, month, day] = ch.date.split("-").map(Number);
-    const target = new Date(Date.UTC(year, month - 1, day, hour - 8, minute)); // UTC correction for PH (+8)
-
-    const diff = target - phTime;
+    const matchTime = parseTime(ch.time, ch.date);
+    const diff = matchTime - phTime;
 
     if (diff <= 0) {
       el.textContent = "LIVE NOW 🟢";
@@ -126,14 +136,28 @@ function updateCountdowns() {
       el.textContent = "Starting Soon 🔴";
       el.style.color = "#ff4444";
     } else {
-      const dPart = days > 0 ? `${days}d ` : "";
-      el.textContent = `Starts in ${dPart}${hours}h ${mins}m ${secs}s`;
-      el.style.color = "#ffcc66";
+      const d = days > 0 ? `${days}d ` : "";
+      el.innerHTML = `⏳ ${d}${pad(hours)}h : ${pad(mins)}m : ${pad(secs)}s`;
+      el.style.color = "#ffd966";
     }
   });
 }
 
-// Video player logic
+function parseTime(timeStr, dateStr) {
+  const [hourStr, minuteStr] = timeStr.match(/\d+/g);
+  const hour = parseInt(hourStr, 10);
+  const minute = parseInt(minuteStr, 10);
+  const isPM = timeStr.toLowerCase().includes("pm");
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const hr24 = (hour % 12) + (isPM ? 12 : 0);
+  return new Date(`${y}-${m}-${d}T${pad(hr24)}:${pad(minute)}:00+08:00`);
+}
+
+function pad(n) {
+  return n.toString().padStart(2, "0");
+}
+
+// ============ Player ============
 function playChannel(url) {
   const container = document.getElementById("videoContainer");
   const video = document.getElementById("videoPlayer");
@@ -164,13 +188,54 @@ function closeVideo() {
   video.removeAttribute("src");
 }
 
-// Search filter
+// ============ TV Remote Navigation ============
+function highlightChannel(index) {
+  const boxes = document.querySelectorAll(".channel-box");
+  boxes.forEach((b) => b.classList.remove("focused"));
+  const el = boxes[index];
+  if (el) {
+    el.classList.add("focused");
+    el.focus();
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+document.addEventListener("keydown", (e) => {
+  const boxes = document.querySelectorAll(".channel-box");
+  const total = boxes.length;
+  if (document.getElementById("videoContainer").style.display === "flex") {
+    if (e.key === "Backspace" || e.key === "Escape") closeVideo();
+    return;
+  }
+
+  switch (e.key) {
+    case "ArrowDown":
+      focusedIndex = (focusedIndex + 1) % total;
+      highlightChannel(focusedIndex);
+      break;
+    case "ArrowUp":
+      focusedIndex = (focusedIndex - 1 + total) % total;
+      highlightChannel(focusedIndex);
+      break;
+    case "Enter":
+    case "OK":
+      playChannel(channels[focusedIndex].server1);
+      break;
+    case "ArrowRight":
+      playChannel(channels[focusedIndex].server2);
+      break;
+  }
+});
+
+// ============ Search ============
 document.getElementById("searchBar").addEventListener("input", (e) => {
   const q = e.target.value.toLowerCase();
   renderChannels(channels.filter((c) => c.title.toLowerCase().includes(q)));
+  focusedIndex = 0;
+  highlightChannel(0);
 });
 
-// Init
+// ============ Init ============
 window.onload = () => {
   renderChannels(channels);
   updateCountdowns();
