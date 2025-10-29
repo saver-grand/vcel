@@ -29,7 +29,7 @@ const channels = [
     title: "LA Clippers vs. Golden State Warriors",
     date: "2025-10-27",
     time: "11:00am",
-    url: "https://e3.thetvapp.to/hls/NBA11/tracks-v1a1/mono.m3u8"
+    url: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8"
   }
 ];
 
