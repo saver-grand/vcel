@@ -1,7 +1,5 @@
 let hls;
-let focusedIndex = 0;
-let lastFocused = null;
-
+let focusedIndex = 0; // for TV navigation
 
 const channels = [
   {
@@ -76,49 +74,51 @@ const channels = [
   }
 ];
 
-const logos = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUDu-D6tpUgnxurH9_AkBQ6a9TzVVpBfNE0VJArNbaWwsFTAEddxVTgHs&s=10";
+const logos =
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUDu-D6tpUgnxurH9_AkBQ6a9TzVVpBfNE0VJArNbaWwsFTAEddxVTgHs&s=10";
 
-// 🧩 Render Channels
+// ============ Render Channels ============
 function renderChannels(list) {
   const container = document.getElementById("channelList");
-  container.innerHTML = list.map((ch, i) => `
-    <div class="channel-box" tabindex="0" data-index="${i}" onclick="playChannel('${ch.server1}')">
-      <img loading="lazy" src="${logos}" alt="${ch.title}">
-      <h3>${ch.title}</h3>
-      <small>📅 ${ch.date} — ${ch.time} PH</small>
-      <div id="timer-${i}" class="countdown">Loading...</div>
-      <div class="server-buttons">
-        <button onclick="event.stopPropagation(); playChannel('${ch.server1}')">Server 1</button>
-        <button onclick="event.stopPropagation(); playChannel('${ch.server2}')">Server 2</button>
-      </div>
-    </div>
-  `).join("");
-  setFocus(focusedIndex);
+  container.innerHTML = list
+    .map(
+      (ch, i) => `
+      <div class="channel-box" tabindex="0" data-index="${i}">
+        <img src="${logos}" alt="${ch.title}">
+        <h3>${ch.title}</h3>
+        <small class="game-date">📅 ${ch.date} — ${ch.time} PH</small>
+        <div id="timer-${i}" class="countdown">Calculating...</div>
+        <div class="server-buttons">
+          <button onclick="playChannel('${ch.server1}')">▶ Server 1</button>
+          <button onclick="playChannel('${ch.server2}')">▶ Server 2</button>
+        </div>
+      </div>`
+    )
+    .join("");
+  highlightChannel(0);
 }
 
-// 🕒 Countdown
+// ============ Countdown Logic ============
 function updateCountdowns() {
   const now = new Date();
   const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
-  const phDisplay = document.getElementById("phTime");
 
-  if (phDisplay) {
-    phDisplay.textContent = "🇵🇭 Philippine Time: " +
-      phTime.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" });
-  }
+  const timeDisplay = document.getElementById("phTime");
+  if (timeDisplay)
+    timeDisplay.textContent =
+      "🇵🇭 Philippine Time: " +
+      phTime.toLocaleTimeString("en-US", {
+        hour12: true,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
 
   channels.forEach((ch, i) => {
     const el = document.getElementById(`timer-${i}`);
     if (!el) return;
-
-    const [time, ampm] = ch.time.toLowerCase().split(/(am|pm)/);
-    let [hour, minute] = time.split(":").map(Number);
-    if (ampm === "pm" && hour < 12) hour += 12;
-    if (ampm === "am" && hour === 12) hour = 0;
-
-    const [year, month, day] = ch.date.split("-").map(Number);
-    const target = new Date(`${year}-${month}-${day}T${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}:00+08:00`);
-    const diff = target - phTime;
+    const matchTime = parseTime(ch.time, ch.date);
+    const diff = matchTime - phTime;
 
     if (diff <= 0) {
       el.textContent = "LIVE NOW 🟢";
@@ -126,24 +126,39 @@ function updateCountdowns() {
       return;
     }
 
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const m = Math.floor((diff / (1000 * 60)) % 60);
-    const s = Math.floor((diff / 1000) % 60);
+    const totalSeconds = Math.floor(diff / 1000);
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const mins = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
 
     if (diff <= 5 * 60 * 1000) {
       el.textContent = "Starting Soon 🔴";
       el.style.color = "#ff4444";
     } else {
-      el.textContent = `Starts in ${d > 0 ? d + "d " : ""}${h}h ${m}m ${s}s`;
-      el.style.color = "#ffcc66";
+      const d = days > 0 ? `${days}d ` : "";
+      el.innerHTML = `⏳ ${d}${pad(hours)}h : ${pad(mins)}m : ${pad(secs)}s`;
+      el.style.color = "#ffd966";
     }
   });
 }
 
-// ▶ Video Player (No popups / warnings)
+function parseTime(timeStr, dateStr) {
+  const [hourStr, minuteStr] = timeStr.match(/\d+/g);
+  const hour = parseInt(hourStr, 10);
+  const minute = parseInt(minuteStr, 10);
+  const isPM = timeStr.toLowerCase().includes("pm");
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const hr24 = (hour % 12) + (isPM ? 12 : 0);
+  return new Date(`${y}-${m}-${d}T${pad(hr24)}:${pad(minute)}:00+08:00`);
+}
+
+function pad(n) {
+  return n.toString().padStart(2, "0");
+}
+
+// ============ Player ============
 function playChannel(url) {
-  lastFocused = focusedIndex;
   const container = document.getElementById("videoContainer");
   const video = document.getElementById("videoPlayer");
   container.style.display = "flex";
@@ -153,82 +168,74 @@ function playChannel(url) {
   video.removeAttribute("src");
   video.load();
 
-  const isM3U8 = url.endsWith(".m3u8");
-  const isTS = url.endsWith(".ts");
-
-  try {
-    if (isM3U8 && Hls.isSupported()) {
-      hls = new Hls({
-        enableWorker: true,
-        lowLatencyMode: true,
-        liveDurationInfinity: true
-      });
-      hls.loadSource(url);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
-    } else {
-      video.src = url;
-      video.play().catch(() => {});
-    }
-
-    // 🚫 Fully silent error handling
-    const silentHandler = (e) => {
-      if (e) {
-        e.preventDefault?.();
-        e.stopPropagation?.();
-      }
-      return false;
-    };
-
-    video.addEventListener("error", silentHandler, true);
-    video.onerror = silentHandler;
-    window.onerror = () => true;
-    window.onunhandledrejection = () => true;
-    console.error = () => {};
-    console.warn = () => {};
-  } catch (_) {}
+  if (Hls.isSupported()) {
+    hls = new Hls();
+    hls.loadSource(url);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    video.src = url;
+    video.addEventListener("loadedmetadata", () => video.play());
+  } else {
+    alert("This stream format is not supported.");
+  }
 }
 
-// ❌ Close Player
 function closeVideo() {
   const video = document.getElementById("videoPlayer");
   document.getElementById("videoContainer").style.display = "none";
   video.pause();
   video.removeAttribute("src");
-  if (hls) hls.destroy();
-  setFocus(lastFocused);
 }
 
-// 🔍 Search
+// ============ TV Remote Navigation ============
+function highlightChannel(index) {
+  const boxes = document.querySelectorAll(".channel-box");
+  boxes.forEach((b) => b.classList.remove("focused"));
+  const el = boxes[index];
+  if (el) {
+    el.classList.add("focused");
+    el.focus();
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+document.addEventListener("keydown", (e) => {
+  const boxes = document.querySelectorAll(".channel-box");
+  const total = boxes.length;
+  if (document.getElementById("videoContainer").style.display === "flex") {
+    if (e.key === "Backspace" || e.key === "Escape") closeVideo();
+    return;
+  }
+
+  switch (e.key) {
+    case "ArrowDown":
+      focusedIndex = (focusedIndex + 1) % total;
+      highlightChannel(focusedIndex);
+      break;
+    case "ArrowUp":
+      focusedIndex = (focusedIndex - 1 + total) % total;
+      highlightChannel(focusedIndex);
+      break;
+    case "Enter":
+    case "OK":
+      playChannel(channels[focusedIndex].server1);
+      break;
+    case "ArrowRight":
+      playChannel(channels[focusedIndex].server2);
+      break;
+  }
+});
+
+// ============ Search ============
 document.getElementById("searchBar").addEventListener("input", (e) => {
   const q = e.target.value.toLowerCase();
-  const filtered = channels.filter((c) => c.title.toLowerCase().includes(q));
-  renderChannels(filtered);
+  renderChannels(channels.filter((c) => c.title.toLowerCase().includes(q)));
+  focusedIndex = 0;
+  highlightChannel(0);
 });
 
-// 🎮 TV Remote
-document.addEventListener("keydown", (e) => {
-  const total = document.querySelectorAll(".channel-box").length;
-  switch (e.key) {
-    case "ArrowDown": focusedIndex = Math.min(focusedIndex + 3, total - 1); break;
-    case "ArrowUp": focusedIndex = Math.max(focusedIndex - 3, 0); break;
-    case "ArrowRight": focusedIndex = Math.min(focusedIndex + 1, total - 1); break;
-    case "ArrowLeft": focusedIndex = Math.max(focusedIndex - 1, 0); break;
-    case "Enter": document.querySelectorAll(".channel-box")[focusedIndex]?.click(); break;
-    case "Backspace":
-    case "Escape": closeVideo(); break;
-  }
-  setFocus(focusedIndex);
-});
-
-// 🌟 Focus
-function setFocus(index) {
-  const boxes = document.querySelectorAll(".channel-box");
-  boxes.forEach((b, i) => b.classList.toggle("focused", i === index));
-  boxes[index]?.focus();
-}
-
-// 🚀 Init
+// ============ Init ============
 window.onload = () => {
   renderChannels(channels);
   updateCountdowns();
