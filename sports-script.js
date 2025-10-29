@@ -2,6 +2,7 @@ let hls;
 let focusedIndex = 0;
 let lastFocused = null;
 
+// 📺 Channel list
 const channels = [
   {
     title: "Houston Rockets vs. Toronto Raptors",
@@ -75,34 +76,40 @@ const channels = [
   }
 ];
 
+// 🏀 Logo
 const logos = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUDu-D6tpUgnxurH9_AkBQ6a9TzVVpBfNE0VJArNbaWwsFTAEddxVTgHs&s=10";
 
-// Render channels
+// 🎨 Render Channels
 function renderChannels(list) {
   const container = document.getElementById("channelList");
-  container.innerHTML = list.map((ch, i) => `
-    <div class="channel-box" tabindex="0" data-index="${i}" onclick="playChannel('${ch.server1}')">
-      <img loading="lazy" src="${logos}" alt="${ch.title}">
-      <h3>${ch.title}</h3>
-      <small>📅 ${ch.date} — ${ch.time} PH</small>
-      <div id="timer-${i}" class="countdown">Loading...</div>
-      <div class="server-buttons">
-        <button onclick="event.stopPropagation(); playChannel('${ch.server1}')">Server 1</button>
-        <button onclick="event.stopPropagation(); playChannel('${ch.server2}')">Server 2</button>
+  container.innerHTML = list
+    .map(
+      (ch, i) => `
+      <div class="channel-box" tabindex="0" data-index="${i}" onclick="playChannel('${ch.server1}')">
+        <img src="${logos}" alt="${ch.title}">
+        <h3>${ch.title}</h3>
+        <small class="game-date">📅 ${ch.date} — ${ch.time} PH</small>
+        <div id="timer-${i}" class="countdown">Loading...</div>
+        <div class="server-buttons">
+          <button onclick="event.stopPropagation(); playChannel('${ch.server1}')">Server 1</button>
+          <button onclick="event.stopPropagation(); playChannel('${ch.server2}')">Server 2</button>
+        </div>
       </div>
-    </div>
-  `).join("");
+    `
+    )
+    .join("");
   setFocus(focusedIndex);
 }
 
-// Countdown updater
+// 🕒 Update countdowns
 function updateCountdowns() {
   const now = new Date();
   const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
   const phDisplay = document.getElementById("phTime");
 
   if (phDisplay) {
-    phDisplay.textContent = "🇵🇭 Philippine Time: " +
+    phDisplay.textContent =
+      "🇵🇭 Philippine Time: " +
       phTime.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" });
   }
 
@@ -140,9 +147,10 @@ function updateCountdowns() {
   });
 }
 
-// 🧠 Safe video player (no alert popups)
+// ▶ Play Channel (Supports .m3u8 and .ts)
 function playChannel(url) {
   lastFocused = focusedIndex;
+
   const container = document.getElementById("videoContainer");
   const video = document.getElementById("videoPlayer");
   container.style.display = "flex";
@@ -158,86 +166,77 @@ function playChannel(url) {
   try {
     if (isM3U8 && Hls.isSupported()) {
       hls = new Hls({
+        maxBufferLength: 30,
         enableWorker: true,
-        lowLatencyMode: true,
-        liveDurationInfinity: true
+        lowLatencyMode: true
       });
       hls.loadSource(url);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.play().catch(() => {});
-      });
-    } else {
+      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
+    } else if (isTS || video.canPlayType("video/mp2t") || video.canPlayType("video/mp4")) {
       video.src = url;
       video.play().catch(() => {});
-    }
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = url;
+      video.addEventListener("loadedmetadata", () => video.play().catch(() => {}));
+    } else {
+      console.warn("Stream format not supported:", url);
 
-    // 🔇 Fully silent error handling
-    video.addEventListener("error", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.warn("Stream error — retrying silently...");
-      setTimeout(() => {
-        if (hls) hls.startLoad();
-        else {
-          video.load();
-          video.play().catch(() => {});
-        }
-      }, 4000);
-    });
-
-    video.onerror = () => {}; // prevent default error popups
-    window.onerror = () => true; // disable global JS alert popups
-  } catch (err) {
-    console.warn("Video load suppressed:", err);
-  }
 }
 
-// Close video
+// ❌ Close video
 function closeVideo() {
   const video = document.getElementById("videoPlayer");
   document.getElementById("videoContainer").style.display = "none";
   video.pause();
   video.removeAttribute("src");
-  if (hls) hls.destroy();
   setFocus(lastFocused);
 }
 
-// Search
+// 🔍 Search
 document.getElementById("searchBar").addEventListener("input", (e) => {
   const q = e.target.value.toLowerCase();
   const filtered = channels.filter((c) => c.title.toLowerCase().includes(q));
   renderChannels(filtered);
 });
 
-// TV Remote
+// 🎮 TV Remote Navigation
 document.addEventListener("keydown", (e) => {
   const total = document.querySelectorAll(".channel-box").length;
 
   switch (e.key) {
-    case "ArrowDown": focusedIndex = Math.min(focusedIndex + 3, total - 1); break;
-    case "ArrowUp": focusedIndex = Math.max(focusedIndex - 3, 0); break;
-    case "ArrowRight": focusedIndex = Math.min(focusedIndex + 1, total - 1); break;
-    case "ArrowLeft": focusedIndex = Math.max(focusedIndex - 1, 0); break;
-    case "Enter": document.querySelectorAll(".channel-box")[focusedIndex]?.click(); break;
+    case "ArrowDown":
+      focusedIndex = Math.min(focusedIndex + 3, total - 1);
+      break;
+    case "ArrowUp":
+      focusedIndex = Math.max(focusedIndex - 3, 0);
+      break;
+    case "ArrowRight":
+      focusedIndex = Math.min(focusedIndex + 1, total - 1);
+      break;
+    case "ArrowLeft":
+      focusedIndex = Math.max(focusedIndex - 1, 0);
+      break;
+    case "Enter":
+      document.querySelectorAll(".channel-box")[focusedIndex]?.click();
+      break;
     case "Backspace":
-    case "Escape": closeVideo(); break;
+    case "Escape":
+      closeVideo();
+      break;
   }
 
   setFocus(focusedIndex);
 });
 
-// Highlight focus
+// 🌟 Focus highlight
 function setFocus(index) {
   const boxes = document.querySelectorAll(".channel-box");
   boxes.forEach((b, i) => b.classList.toggle("focused", i === index));
   boxes[index]?.focus();
 }
 
-// Back button
-window.addEventListener("popstate", closeVideo);
-
-// Init
+// 🚀 Init
 window.onload = () => {
   renderChannels(channels);
   updateCountdowns();
