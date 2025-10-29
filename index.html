@@ -1,3 +1,327 @@
-<script>
-document.write(unescape('%3C%21DOCTYPE%20html%3E%0A%3Chtml%20lang%3D%22en%22%3E%0A%3Chead%3E%0A%20%20%3Cmeta%20charset%3D%22UTF-8%22%20/%3E%0A%20%20%3Cmeta%20name%3D%22viewport%22%20content%3D%22width%3Ddevice-width%2C%20initial-scale%3D1.0%22%20/%3E%0A%20%20%3Ctitle%3ESPORTS%20EVENT%20%7C%20PH%20TIME%3C/title%3E%0A%20%20%3Cscript%20src%3D%22https%3A//cdn.jsdelivr.net/npm/hls.js@latest%22%3E%3C/script%3E%0A%20%20%3Clink%20rel%3D%22stylesheet%22%20href%3D%22sports-style.css%22%20/%3E%0A%3C/head%3E%0A%3Cbody%3E%0A%20%20%3Ch1%3ESPORTS%20EVENT%3C/h1%3E%0A%20%20%3Cdiv%20id%3D%22phTime%22%3E%uD83C%uDDF5%uD83C%uDDED%20Philippine%20Time%3A%20--%3A--%3A--%3C/div%3E%0A%0A%20%20%3Cdiv%20class%3D%22card%22%3E%0A%20%20%20%20%3Cinput%20type%3D%22text%22%20id%3D%22searchBar%22%20placeholder%3D%22%uD83D%uDD0D%20Search%20match...%22%20/%3E%0A%20%20%20%20%3Cdiv%20id%3D%22channelList%22%20class%3D%22channel-grid%22%3E%3C/div%3E%0A%20%20%3C/div%3E%0A%0A%20%20%3Cdiv%20id%3D%22videoContainer%22%3E%0A%20%20%20%20%3Cbutton%20id%3D%22closeBtn%22%20onclick%3D%22closeVideo%28%29%22%3EClose%3C/button%3E%0A%20%20%20%20%3Cvideo%20id%3D%22videoPlayer%22%20controls%20autoplay%20playsinline%3E%3C/video%3E%0A%20%20%3C/div%3E%0A%0A%20%20%3Cscript%20src%3D%22sports-script.js%22%3E%3C/script%3E%0A%3C/body%3E%0A%3C/html%3E'));
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPORTS EVENT | PH TIME</title>
+
+  <!-- Load HLS.js only when needed -->
+  <script defer src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+  <!-- Performance optimizations -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+  <link rel="preconnect" href="https://encrypted-tbn0.gstatic.com" />
+  <link rel="dns-prefetch" href="https://encrypted-tbn0.gstatic.com" />
+
+  <style>
+    :root {
+      --bg-dark: #0b0b0b;
+      --bg-card: #151515;
+      --text-main: #e0ffe0;
+      --accent: #00ff99;
+      --warning: #ff4444;
+      --shadow-glow: rgba(0, 255, 153, 0.4);
+      --hover-glow: rgba(0, 255, 153, 0.7);
+      --input-bg: #1d1d1d;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      margin: 0;
+      padding: 1rem;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--shadow-glow);
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 0.4rem;
+    }
+
+    #phTime {
+      font-size: 1rem;
+      color: #b3ffb3;
+      text-shadow: 0 0 6px var(--hover-glow);
+      margin-bottom: 1rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: 15px;
+      box-shadow: 0 0 20px var(--shadow-glow);
+      padding: 1rem;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    #searchBar {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      background: var(--input-bg);
+      color: var(--text-main);
+      margin-bottom: 1rem;
+      outline: none;
+      transition: box-shadow 0.2s ease;
+    }
+
+    #searchBar:focus {
+      box-shadow: 0 0 12px 2px var(--hover-glow);
+    }
+
+    .channel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .channel-box {
+      background: #111;
+      border-radius: 12px;
+      padding: 0.6rem;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 255, 153, 0.15);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .channel-box:hover,
+    .channel-box.focused {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px var(--hover-glow);
+      border: 2px solid var(--accent);
+    }
+
+    .channel-box img {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      margin-bottom: 8px;
+      filter: brightness(1.15);
+      border-radius: 10px;
+    }
+
+    .channel-box h3 {
+      font-size: 0.9rem;
+      color: #ccffcc;
+      margin: 4px 0;
+      font-weight: 600;
+    }
+
+    .countdown {
+      font-weight: bold;
+      margin-top: 4px;
+      font-size: 15px;
+      transition: color 0.3s ease;
+    }
+
+    .server-buttons {
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .server-buttons button {
+      background: #0b5ed7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .server-buttons button:hover,
+    .server-buttons button:focus {
+      background: #198754;
+      transform: scale(1.08);
+      outline: none;
+    }
+
+    #videoContainer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.95);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      transition: opacity 0.3s ease;
+    }
+
+    #videoPlayer {
+      width: 90vw;
+      max-height: 90vh;
+      border-radius: 12px;
+      border: 3px solid var(--accent);
+      background: black;
+    }
+
+    #closeBtn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--accent);
+      color: #000;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px var(--hover-glow);
+      transition: background 0.3s ease, transform 0.2s;
+    }
+
+    #closeBtn:hover {
+      background: #00cc88;
+      transform: scale(1.1);
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.5rem; }
+      #searchBar { font-size: 0.9rem; }
+      .channel-box img { width: 45px; height: 45px; }
+      .channel-box h3 { font-size: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+  <h1>SPORTS EVENT</h1>
+  <div id="phTime">🇵🇭 Philippine Time: --:--:--</div>
+
+  <div class="card">
+    <input type="text" id="searchBar" placeholder="🔍 Search match..." />
+    <div id="channelList" class="channel-grid"></div>
+  </div>
+
+  <div id="videoContainer">
+    <button id="closeBtn" onclick="closeVideo()">Close</button>
+    <video id="videoPlayer" controls autoplay playsinline></video>
+  </div>
+
+  <script defer>
+    let hls, focusedIndex = 0;
+    const logos = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUDu-D6tpUgnxurH9_AkBQ6a9TzVVpBfNE0VJArNbaWwsFTAEddxVTgHs&s=10";
+
+const channels = [
+  { title: "Houston Rockets vs. Toronto Raptors", date: "2025-10-30", time: "06:30am", server1: "https://nami.videobss.com/live/hd-en-2-3866742.m3u8", server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214173.m3u8" },
+  { title: "Cleveland Cavaliers vs. Boston Celtics", date: "2025-10-30", time: "07:00am", server1: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8", server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214171.m3u8" },
+  { title: "Orlando Magic vs. Detroit Pistons", date: "2025-10-30", time: "07:00am", server1: "https://nami.videobss.com/live/hd-en-2-3866633.m3u8", server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214174.m3u8" },
+  { title: "Atlanta Hawks vs. Brooklyn Nets", date: "2025-10-30", time: "07:30am", server1: "https://e4.thetvapp.to/hls/NBA24/tracks-v1a1/mono.m3u8", server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214175.m3u8" },
+  { title: "Sacramento Kings vs. Chicago Bulls", date: "2025-10-30", time: "08:00am", server1: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8", server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214176.m3u8" },
+  { title: "Indiana Pacers vs. Dallas Mavericks", date: "2025-10-30", time: "08:30am", server1: "https://e4.thetvapp.to/hls/NBA23/tracks-v1a1/mono.m3u8", server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214177.m3u8" },
+  { title: "New Orleans Pelicans vs. Denver Nuggets", date: "2025-10-30", time: "09:00am", server1: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8", server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214178.m3u8" },
+  { title: "Portland Trail Blazers vs. Utah Jazz", date: "2025-10-30", time: "09:00am", server1: "https://e2.thetvapp.to/hls/NBA08/tracks-v1a1/mono.m3u8", server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214179.m3u8" },
+  { title: "Los Angeles Lakers vs. Minnesota Timberwolves", date: "2025-10-30", time: "09:30am", server1: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8", server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214172.m3u8" },
+  { title: "Memphis Grizzlies vs. Phoenix Suns", date: "2025-10-30", time: "10:00am", server1: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8", server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214180.m3u8" }
+];
+
+    function renderChannels(list) {
+      const container = document.getElementById("channelList");
+      container.innerHTML = list.map((ch, i) => `
+        <div class="channel-box" data-index="${i}">
+          <img loading="lazy" src="${logos}" alt="${ch.title}">
+          <h3>${ch.title}</h3>
+          <small>📅 ${ch.date} — ${ch.time} PH</small>
+          <div id="timer-${i}" class="countdown">⏳ Loading...</div>
+          <div class="server-buttons">
+            <button onclick="playChannel('${ch.server1}')">▶ Server 1</button>
+            <button onclick="playChannel('${ch.server2}')">▶ Server 2</button>
+          </div>
+        </div>`).join("");
+      highlightChannel(0);
+    }
+
+    function updateCountdowns() {
+      const now = new Date();
+      const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
+      document.getElementById("phTime").textContent =
+        "🇵🇭 Philippine Time: " + phTime.toLocaleTimeString("en-US", { hour12: true });
+      channels.forEach((ch, i) => {
+        const el = document.getElementById(`timer-${i}`);
+        if (!el) return;
+        const matchTime = parseTime(ch.time, ch.date);
+        const diff = matchTime - phTime;
+        if (diff <= 0) {
+          el.textContent = "LIVE NOW 🟢";
+          el.style.color = "limegreen";
+        } else {
+          const t = Math.floor(diff / 1000);
+          const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60;
+          el.textContent = `⏳ ${pad(h)}h : ${pad(m)}m : ${pad(s)}s`;
+          el.style.color = "#ffd966";
+        }
+      });
+    }
+
+    function parseTime(time, date) {
+      const [h, m] = time.match(/\d+/g).map(Number);
+      const isPM = time.toLowerCase().includes("pm");
+      const [y, mo, d] = date.split("-").map(Number);
+      const hr24 = (h % 12) + (isPM ? 12 : 0);
+      return new Date(`${y}-${mo}-${d}T${pad(hr24)}:${pad(m)}:00+08:00`);
+    }
+
+    const pad = n => n.toString().padStart(2, "0");
+
+    function playChannel(url) {
+      const c = document.getElementById("videoContainer");
+      const v = document.getElementById("videoPlayer");
+      c.style.display = "flex";
+      if (hls) hls.destroy();
+      v.pause(); v.removeAttribute("src"); v.load();
+
+      if (Hls.isSupported()) {
+        hls = new Hls({ enableWorker: true, lowLatencyMode: true });
+        hls.loadSource(url); hls.attachMedia(v);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => v.play().catch(()=>{}));
+      } else if (v.canPlayType("application/vnd.apple.mpegurl")) {
+        v.src = url; v.play().catch(()=>{});
+      }
+    }
+
+    function closeVideo() {
+      document.getElementById("videoContainer").style.display = "none";
+    }
+
+    function highlightChannel(i) {
+      document.querySelectorAll(".channel-box").forEach(b => b.classList.remove("focused"));
+      const el = document.querySelector(`.channel-box[data-index='${i}']`);
+      if (el) { el.classList.add("focused"); el.scrollIntoView({ behavior: "smooth", block: "center" }); }
+    }
+
+    document.getElementById("searchBar").addEventListener("input", e => {
+      const q = e.target.value.toLowerCase();
+      renderChannels(channels.filter(c => c.title.toLowerCase().includes(q)));
+    });
+
+    window.addEventListener("load", () => {
+      renderChannels(channels);
+      updateCountdowns();
+      setInterval(updateCountdowns, 1000);
+    });
+  </script>
+</body>
+</html>
