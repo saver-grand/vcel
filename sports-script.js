@@ -6,7 +6,7 @@ const channels = [
     title: "Houston Rockets vs. Toronto Raptors",
     date: "2025-10-30",
     time: "06:30am",
-    server1: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8",
+    server1: "https://e4.thetvapp.to/hls/NBA25/tracks-v1a1/mono.m3u8",
     server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214173.ts"
   },
   {
@@ -27,7 +27,7 @@ const channels = [
     title: "Atlanta Hawks vs. Brooklyn Nets",
     date: "2025-10-30",
     time: "07:30am",
-    server1: "https://e1.thetvapp.to/hls/NBA22/tracks-v1a1/mono.m3u8",
+    server1: "https://e4.thetvapp.to/hls/NBA24/tracks-v1a1/mono.m3u8",
     server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214175.ts"
   },
   {
@@ -41,7 +41,7 @@ const channels = [
     title: "Indiana Pacers vs. Dallas Mavericks",
     date: "2025-10-30",
     time: "08:30am",
-    server1: "https://nami.videobss.com/live/hd-en-2-3866981.m3u8",
+    server1: "https://e4.thetvapp.to/hls/NBA23/tracks-v1a1/mono.m3u8",
     server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214177.ts"
   },
   {
