@@ -2,7 +2,6 @@ let hls;
 let focusedIndex = 0;
 let lastFocused = null;
 
-// 📺 Channel list
 const channels = [
   {
     title: "Houston Rockets vs. Toronto Raptors",
@@ -35,7 +34,7 @@ const channels = [
   {
     title: "Sacramento Kings vs. Chicago Bulls",
     date: "2025-10-30",
-    time: "08:00am",
+    time: "8:00am",
     server1: "https://nami.videobss.com/live/hd-en-2-3866311.m3u8",
     server2: "https://s.rocketdns.info:443/live/xmltv/02a162774b/214176.m3u8"
   },
@@ -78,14 +77,14 @@ const channels = [
 
 const logos = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUDu-D6tpUgnxurH9_AkBQ6a9TzVVpBfNE0VJArNbaWwsFTAEddxVTgHs&s=10";
 
-// 🎨 Render channels
+// Render channels
 function renderChannels(list) {
   const container = document.getElementById("channelList");
   container.innerHTML = list.map((ch, i) => `
     <div class="channel-box" tabindex="0" data-index="${i}" onclick="playChannel('${ch.server1}')">
       <img loading="lazy" src="${logos}" alt="${ch.title}">
       <h3>${ch.title}</h3>
-      <small class="game-date">📅 ${ch.date} — ${ch.time} PH</small>
+      <small>📅 ${ch.date} — ${ch.time} PH</small>
       <div id="timer-${i}" class="countdown">Loading...</div>
       <div class="server-buttons">
         <button onclick="event.stopPropagation(); playChannel('${ch.server1}')">Server 1</button>
@@ -96,15 +95,14 @@ function renderChannels(list) {
   setFocus(focusedIndex);
 }
 
-// 🕒 Countdown updater
+// Countdown updater
 function updateCountdowns() {
   const now = new Date();
   const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
   const phDisplay = document.getElementById("phTime");
 
   if (phDisplay) {
-    phDisplay.textContent =
-      "🇵🇭 Philippine Time: " +
+    phDisplay.textContent = "🇵🇭 Philippine Time: " +
       phTime.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" });
   }
 
@@ -142,7 +140,7 @@ function updateCountdowns() {
   });
 }
 
-// ▶ Stream Player (safe from popups)
+// 🧠 Safe video player (no alert popups)
 function playChannel(url) {
   lastFocused = focusedIndex;
   const container = document.getElementById("videoContainer");
@@ -162,42 +160,40 @@ function playChannel(url) {
       hls = new Hls({
         enableWorker: true,
         lowLatencyMode: true,
-        liveDurationInfinity: true,
-        maxBufferLength: 20,
-        backBufferLength: 30
+        liveDurationInfinity: true
       });
       hls.loadSource(url);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch(() => {});
+      });
     } else {
       video.src = url;
       video.play().catch(() => {});
     }
 
-    // 🧠 Silent error handler (no popups, no alerts)
-    video.addEventListener("error", () => {
-      console.log("Stream temporarily unavailable, retrying silently...");
+    // 🔇 Fully silent error handling
+    video.addEventListener("error", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.warn("Stream error — retrying silently...");
       setTimeout(() => {
-        if (hls) {
-          hls.startLoad();
-        } else {
+        if (hls) hls.startLoad();
+        else {
           video.load();
           video.play().catch(() => {});
         }
       }, 4000);
     });
 
-    video.addEventListener("ended", () => {
-      video.play().catch(() => {});
-    });
-
-    history.pushState(null, null, location.href);
-  } catch {
-    // Suppress any thrown errors silently
+    video.onerror = () => {}; // prevent default error popups
+    window.onerror = () => true; // disable global JS alert popups
+  } catch (err) {
+    console.warn("Video load suppressed:", err);
   }
 }
 
-// ❌ Close video
+// Close video
 function closeVideo() {
   const video = document.getElementById("videoPlayer");
   document.getElementById("videoContainer").style.display = "none";
@@ -207,14 +203,14 @@ function closeVideo() {
   setFocus(lastFocused);
 }
 
-// 🔍 Search bar
+// Search
 document.getElementById("searchBar").addEventListener("input", (e) => {
   const q = e.target.value.toLowerCase();
   const filtered = channels.filter((c) => c.title.toLowerCase().includes(q));
   renderChannels(filtered);
 });
 
-// 🎮 TV Remote
+// TV Remote
 document.addEventListener("keydown", (e) => {
   const total = document.querySelectorAll(".channel-box").length;
 
@@ -231,17 +227,17 @@ document.addEventListener("keydown", (e) => {
   setFocus(focusedIndex);
 });
 
-// 🌟 Focus highlight
+// Highlight focus
 function setFocus(index) {
   const boxes = document.querySelectorAll(".channel-box");
   boxes.forEach((b, i) => b.classList.toggle("focused", i === index));
   boxes[index]?.focus();
 }
 
-// 🕹 Back button for TV/Android
+// Back button
 window.addEventListener("popstate", closeVideo);
 
-// 🚀 Init
+// Init
 window.onload = () => {
   renderChannels(channels);
   updateCountdowns();
