@@ -11,7 +11,7 @@ const channels = [
     title: "Charlotte Hornets vs. Miami Heat",
     date: "2025-10-27",
     time: "07:00",
-    url: "https://e1.thetvapp.to/hls/NBA13/tracks-v1a1/mono.m3u8"
+    url: "https://nami.videobss.com/live/hd-en-2-3866204.m3u8"
   },
   {
     title: "New York Knicks vs. Milwaukee Bucks",
